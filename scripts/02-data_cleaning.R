@@ -10,6 +10,7 @@
 #### Workspace setup ####
 library(tidyverse)
 library(lubridate)
+library(arrow)
 
 #### Clean data ####
 
@@ -50,4 +51,6 @@ cleaned_data <-
   rename(Death_Count = Count)
 
 #### Save data ####
+write_parquet(x = cleaned_data,
+              sink = "data/analysis_data/cleaned_data.parquet")
 write_csv(cleaned_data, "data/analysis_data/cleaned_data.csv")

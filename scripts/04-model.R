@@ -11,27 +11,43 @@
 #### Workspace setup ####
 library(tidyverse)
 library(rstanarm)
+library(arrow)
 
 #### Read data ####
-analysis_data <- read_csv("data/analysis_data/analysis_data.csv")
+analysis_data <- read_parquet("data/analysis_data/cleaned_data.parquet")
 
 ### Model data ####
-first_model <-
+total_coded_model <-
   stan_glm(
-    formula = flying_time ~ length + width,
-    data = analysis_data,
+    formula = Death_Count ~ Total_Coded,
+    data = cleaned_data,
     family = gaussian(),
     prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
     prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
     prior_aux = exponential(rate = 1, autoscale = TRUE),
-    seed = 853
+    seed = 21
   )
 
+referred_informed_model <-
+  stan_glm(
+    formula = Death_Count ~ Referred + Informed,
+    data = cleaned_data,
+    family = gaussian(),
+    prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
+    prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
+    prior_aux = exponential(rate = 1, autoscale = TRUE),
+    seed = 21
+  )
 
 #### Save model ####
 saveRDS(
-  first_model,
-  file = "models/first_model.rds"
+  total_coded_model,
+  file = "models/total_coded_model.rds"
+)
+
+saveRDS(
+  referred_informed_model,
+  file = "models/referred_informed_model.rds"
 )
 
 

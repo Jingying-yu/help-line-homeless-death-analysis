@@ -12,8 +12,6 @@ library(tidyverse)
 
 
 #### Test data ####
-
-
 # Test for missing values
 anyNA(cleaned_data) == FALSE
   
@@ -31,14 +29,14 @@ class(cleaned_data$Death_Count) == "numeric"
 # Test that date is within the bounds of 2020-11-01 to 2023-06-30
 start_date <- as.Date("2020-11-30")
 end_date <- as.Date("2023-06-30")
-start_date <= cleaned_helpline$Month_date[1]
-end_date >= cleaned_helpline$Month_date[32]
+start_date <= cleaned_data$Month_date[1]
+end_date >= cleaned_data$Month_date[32]
 
 # Test that dates are chronological
 chronological_dates <- list()
 
 for (n in 1:(length(cleaned_helpline$Month_date)-1)) {
-  if (cleaned_helpline$Month_date[[n]] < cleaned_helpline$Month_date[[n+1]]) {
+  if (cleaned_data$Month_date[[n]] < cleaned_data$Month_date[[n+1]]) {
     chronological_dates[[n]] <- TRUE
   }
   else{
@@ -46,3 +44,4 @@ for (n in 1:(length(cleaned_helpline$Month_date)-1)) {
   }
 }
 all(chronological_dates == "TRUE")
+
