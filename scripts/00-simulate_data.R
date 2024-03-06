@@ -1,11 +1,10 @@
 #### Preamble ####
-# Purpose: Simulates... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Simulates data to predict issues that we may encounter with the real datasets
+# Author: Sandy Yu
+# Date: 5 March, 2024
+# Contact: jingying.yu@mail.utoronto.ca 
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: look at sketches file or have a basic understanding of what the data is used for
 
 
 #### Workspace setup ####
