@@ -17,6 +17,9 @@ library(arrow)
 analysis_data <- read_parquet("data/analysis_data/cleaned_data.parquet")
 
 ### Model data ####
+# total_coded_model is a regression model of Death_Count = b_0 + b_1*Total_Coded + eplison
+# Total_Coded variable includes the sum of helplines calls coded per month, including calls that are coded as "Reffered" and "Informed"
+# Relationship between Total_Coded and "Referred" "Informed" is: Total_Coded = Referred + Informed + others
 total_coded_model <-
   stan_glm(
     formula = Death_Count ~ Total_Coded,
@@ -28,6 +31,7 @@ total_coded_model <-
     seed = 21
   )
 
+# referred_informed_model focuses on the causal relationship between two of the helpline code types: Referred and Informed
 referred_informed_model <-
   stan_glm(
     formula = Death_Count ~ Referred + Informed,
