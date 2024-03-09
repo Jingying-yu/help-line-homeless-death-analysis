@@ -14,7 +14,7 @@ library(rstanarm)
 library(arrow)
 
 #### Read data ####
-analysis_data <- read_parquet("data/analysis_data/cleaned_data.parquet")
+cleaned_data <- read_parquet("data/analysis_data/cleaned_data.parquet")
 
 ### Model data ####
 # total_coded_model is a regression model of Death_Count = b_0 + b_1*Total_Coded + eplison
