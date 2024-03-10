@@ -34,13 +34,13 @@ The remainder of this paper is structured as follows. @sec-data....
 
 # Data {#sec-data}
 
-## Helpline Wrap-Up Codes Data
+## Central Intake Call Wrap-Up Codes
 ```{r}
 #| label: tbl-monthly-coded
 #| tbl-cap: Sample of monthly summation for Helpline Coded Calls data
 #| echo: false
 
-cleaned_data <- read_parquet("data/analysis_data/cleaned_data.parquet")
+cleaned_data <- read_parquet(here::here("data/analysis_data/cleaned_data.parquet"))
 
 sample_helpline <- cleaned_data |> select(Month_date, Total_Coded, Referred, Informed) 
 
@@ -48,11 +48,23 @@ sample_helpline <- head(sample_helpline)
 
 knitr::kable(sample_helpline, col.names = c("Month", "Calls Coded", "Referral to Shelter", "Homelessness Prevention Info"), align = c("l", "c", "c", "c"))
 ```
+## Deaths of People Experiencing Homelessness
 
+```{r}
+#| label: tbl-death-count
+#| tbl-cap: Sample of Cleaned Deaths of People Experiencing Homelessness Dataset
+#| echo: false
+
+sample_death_counts <- cleaned_data |> select(Month_date, Death_Count) 
+
+sample_death_counts <- head(sample_death_counts)
+
+knitr::kable(sample_death_counts, col.names = c("Month", "Death Count"), align = c("c", "c"))
+```
 
 ## Final Combined Dataset
 ```{r}
-#| label: tbl-monthly-calls
+#| label: tbl-combined
 #| tbl-cap: Sample of monthly homeless death count and Helpline Coding efforts
 #| echo: false
 
