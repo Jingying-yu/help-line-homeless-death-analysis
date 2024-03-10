@@ -19,17 +19,15 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(rstanarm)
+library(arrow)
 ```
-
 
 # Introduction
 
 You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
 
 The remainder of this paper is structured as follows. @sec-data....
-
-
 
 # Data {#sec-data}
 
@@ -70,9 +68,7 @@ analysis_data |>
        y = "Wing length (mm)")
 ```
 
-Talk way more about it. 
-
-
+Talk way more about it.
 
 # Model
 
@@ -82,7 +78,8 @@ Here we briefly describe the Bayesian analysis model used to investigate... Back
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
+
 
 \begin{align} 
 y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
@@ -95,17 +92,15 @@ y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
 
 We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
 
-
 ### Model justification
 
 We expect a positive relationship between the size of the wings and time spent aloft. In particular...
 
 We can use maths by including latex between dollar signs, for instance $\theta$.
 
-
 # Results
 
-Our results are summarized in @tbl-modelresults.
+Our results are summarized in @tbl-total_coded_modelresults and @tbl-referred_informed_modelresults.
 
 ```{r}
 #| echo: false
@@ -115,34 +110,51 @@ Our results are summarized in @tbl-modelresults.
 
 library(rstanarm)
 
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
+total_coded_model <-
+  readRDS(file = here::here("models/total_coded_model.rds"))
+
+referred_informed_model <-
+  readRDS(file = 
+            here::here("models/referred_informed_model.rds"))
 ```
 
 ```{r}
 #| echo: false
 #| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
+#| label: tbl-total_coded_modelresults
+#| tbl-cap: "Explanatory model of homeless death count in relation to total number of helpline calls coded per month"
 #| warning: false
 
 modelsummary::modelsummary(
   list(
-    "First model" = first_model
+    "Total Coded Model" = total_coded_model
   ),
   statistic = "mad",
-  fmt = 2
+  fmt = 3
 )
 ```
 
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-referred_informed_modelresults
+#| tbl-cap: "Explanatory model of homeless death count in relation to the number of homeless referred to shelters and provided with information on homelessness prevention per month"
+#| warning: false
 
-
+modelsummary::modelsummary(
+  list(
+    "Referred and Informed Model" = referred_informed_model
+  ),
+  statistic = "mad",
+  fmt = 3
+)
+```
 
 # Discussion
 
 ## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
 
 ## Second discussion point
 
@@ -156,8 +168,7 @@ Weaknesses and next steps should also be included.
 
 \appendix
 
-# Appendix {-}
-
+# Appendix {.unnumbered}
 
 # Additional data details
 
@@ -167,7 +178,7 @@ Weaknesses and next steps should also be included.
 
 In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
 
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows...
 
 ```{r}
 #| eval: true
@@ -178,12 +189,35 @@ In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. Th
 #| layout-ncol: 2
 #| fig-cap: "Examining how the model fits, and is affected by, the data"
 #| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+library(ggplot2)
 
-pp_check(first_model) +
+pp_check(total_coded_model) +
   theme_classic() +
   theme(legend.position = "bottom")
 
-posterior_vs_prior(first_model) +
+posterior_vs_prior(total_coded_model) +
+  theme_minimal() +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom") +
+  coord_flip()
+```
+
+```{r}
+#| eval: true
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-ppcheckandposteriorvsprior
+#| layout-ncol: 2
+#| fig-cap: "Examining how the model fits, and is affected by, the data"
+#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+library(ggplot2)
+
+pp_check(referred_informed_model) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+
+posterior_vs_prior(referred_informed_model) +
   theme_minimal() +
   scale_color_brewer(palette = "Set1") +
   theme(legend.position = "bottom") +
@@ -192,30 +226,45 @@ posterior_vs_prior(first_model) +
 
 ## Diagnostics
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+@fig-total_coded_model_stanareyouokay-1 is a trace plot. It shows... This suggests...
 
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+@fig-total_coded_model_stanareyouokay-2 is a Rhat plot. It shows... This suggests...
 
 ```{r}
 #| echo: false
 #| eval: true
 #| message: false
 #| warning: false
-#| label: fig-stanareyouokay
+#| label: fig-total_coded_model_stanareyouokay
 #| fig-cap: "Checking the convergence of the MCMC algorithm"
 #| fig-subcap: ["Trace plot", "Rhat plot"]
 #| layout-ncol: 2
 
-plot(first_model, "trace")
+plot(total_coded_model, "trace")
 
-plot(first_model, "rhat")
+plot(total_coded_model, "rhat")
 ```
 
 
+@fig-referred_informed_model_stanareyouokay-1 is a trace plot. It shows... This suggests...
+
+@fig-referred_informed_model_stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-referred_informed_model_stanareyouokay
+#| fig-cap: "Checking the convergence of the MCMC algorithm"
+#| fig-subcap: ["Trace plot", "Rhat plot"]
+#| layout-ncol: 2
+
+plot(referred_informed_model, "trace")
+
+plot(referred_informed_model, "rhat")
+```
 
 \newpage
 
-
 # References
-
-
