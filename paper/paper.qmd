@@ -29,11 +29,19 @@ library(ggplot2)
 
 You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
 
-The remainder of this paper is structured as follows. @sec-data....
+Analyses and findings in this paper are structured into several sections: @sec-data -- Data, @sec-model – Model, @sec-results -- Results, and @sec-discussion -- Discussion. The Data section examines all datasets and variables kept for analysis, followed by an explanation of their data cleaning processes. The Model section defines linear models used for further analysis, explain its components, and presents model justifications. The Result section focuses on visualizing and presenting the model results through data presented in Data section. The Discussion section further evaluate the interpretations behind the model results presented in the previous section, and touches on any weaknesses and next steps.
 
 # Data {#sec-data}
 
+All data used in this paper are obtained through OpenDataToronto Portal [@OpenDataToronto]. Two different datasets: Central Intake Call Wrap-Up Codes Data [@Central_Intake_Call] and Deaths of People Experiencing Homelessness[@Homeless_Death_Count], are retrieved to analyze the effect of Toronto’s Central Call Line (denoted as *Helpline* for the remainder of this paper) efforts to the death counts of homeless individuals in Toronto. Data is cleaned and analyzed using the open source statistical programming language R [@citeR] and supporting packages tidyverse [@tidyverse], janitor [@janitor], dplyr [@dplyr], rstanarm [@rstanarm], arrow [@arrow], ggplot2 [@ggplot2], and knitr [@knitr]. Detailed description of each dataset can be found in the subsections below.
+
 ## Central Intake Call Wrap-Up Codes
+
+On the OpenDataToronto portal, there are several datasets that reflect the City’s effort to shelter the local homeless population. The Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call], stored in the Central Intake Calls Catalogue [@Central_Intake_Call], is one of the freshest and most detailed. Data is stored and published by the Shelter, Support & Housing Administration since November of 2020 and refreshes on a monthly basis. The latest refresh occurred on January 15th, 2024.
+
+The data set provides a daily summary of the number of calls received, the number of calls classified into distinct wrap-up codes by the nature of its issue, and a count of calls under each wrap-up code. One of the example wrap-up codes in the original data set was: *Code 1A - Referral to a Sleeping/Resting Space*. The original data set includes 13 distinct wrap-up codes; only two codes, *Code 1A — Referral to a Sleeping/Resting Space* and *Code 2C — Information - Homelessness & Prevention Services*, were chosen for our analysis. Code 1A and Code 2C are best suited as measurements for positive impact the Central Intake Line could provide because they provide a count of the number of callers provided with directions or advice. Other non-suitable wrap-up codes include: *Code 1D - Declined Shelter/Resting Space*, *Code 4B - Disconnected - No Outcome*, etc.
+
+The final dataset only includes monthly cumulative data before July of 2023. The rationalization behind the action will be explained in @sec-combined-data.
 
 ```{r}
 #| label: tbl-monthly-coded
@@ -51,6 +59,12 @@ knitr::kable(sample_helpline, col.names = c("Month", "Calls Coded", "Referral to
 
 ## Deaths of People Experiencing Homelessness
 
+The Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] contains monthly cumulative records of homeless deaths. The dataset is published by Toronto Public Health [@TPH]. The earliest data record started in January of 2017, and the latest record ends in June of 2023.
+
+The original dataset contains three columns: *Year of death*, *Month of death*, and *Count*. After careful inspection of raw data, any rows that containing an “unknown” value are excluded. Although this action created a source of error in future analyses, this is still a necessary step because we are plotting death counts against a timeline. 
+
+Final dataset only includes data from November 2020 to June 2023 (@tbl-death-count). The rationalization behind the action will be explained in @sec-data-diff-datasets.
+
 ```{r}
 #| label: tbl-death-count
 #| tbl-cap: Sample of Cleaned Deaths of People Experiencing Homelessness Dataset
@@ -63,7 +77,13 @@ sample_death_counts <- head(sample_death_counts)
 knitr::kable(sample_death_counts, col.names = c("Month", "Death Count"), align = c("c", "c"))
 ```
 
-## Final Combined Dataset
+## Final Combined Data {#sec-combined-data}
+
+During the data cleaning process, code was written to ensure that both the Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call] and the Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] are filtered to include only data between 1st November, 2020 to 30st June, 2023. 
+
+The decision is reached by taking the common time period between the two datasets. In the latest refresh, the Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call] begins on 3rd November, 2020 and end on 31st December, 2023; whereas the Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] begins on January of 2017 and ends on June 2023.
+
+The ultimate purpose of taking the common time period is to ensure that we can have the same amount of observations for analysis. Thus a combined dataset that kept the variables of interest in both datasets is created (@tbl-combined).
 
 ```{r}
 #| label: tbl-combined
@@ -76,7 +96,7 @@ knitr::kable(sample_cleaned_data, col.names = c("Month", "Total Coded", "Referre
 
 ```
 
-# Model
+# Model {#sec-model}
 
 The goal of our modelling strategy is twofold. Firstly,...
 
@@ -102,7 +122,7 @@ Where:
 
 -   $y_i$ is the number of homeless death count in Toronto recorded by @TPH per month
 
--    $\phi_i$ is the total number of calls received and coded by the helpline per month
+-   $\phi_i$ is the total number of calls received and coded by the helpline per month
 
 ### Model 2: Referred Informed Model
 
@@ -134,7 +154,7 @@ We expect a net negative relationship between the net efforts made by the helpli
 
 Additionally, we expect a negative relationship between homeless death and the number of homeless individuals referred to shelter & the number of individuals provided with homelessness prevention information. Since both factors are coded efforts made by the helpline, both factors should also help to reduce homeless death count in Toronto.
 
-# Results
+# Results {#sec-results}
 
 Our results are summarized in @tbl-total_coded_modelresults and @tbl-referred_informed_modelresults.
 
@@ -186,7 +206,7 @@ modelsummary::modelsummary(
 )
 ```
 
-# Discussion
+# Discussion {#sec-discussion}
 
 ## First discussion point {#sec-first-point}
 
