@@ -3,7 +3,7 @@ title: "My title"
 subtitle: "My subtitle if needed"
 author: 
   - Sandy Yu
-thanks: "Code and data are available at: LINK."
+thanks: "Code and data are available at: https://github.com/Jingying-yu/help-line-homeless-death-analysis.git"
 date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
@@ -108,9 +108,9 @@ Magnitude of effect created by the helpline efforts can be estimated through lin
 
 ### Model 1: Total Coded Model
 
-$y_i|\lambda_i$, $\sigma \sim \mbox{Poisson}(\lambda_i)$
+$y_i|\mu_i$, $\sigma \sim \mbox{Normal}(\mu_i, \sigma)$
 
-$lambda_i = \alpha + \phi_i$
+$mu_i = \alpha + \phi_i$
 
 $\alpha \sim \mbox{Normal}(0, 2.5)$
 
@@ -126,9 +126,9 @@ Where:
 
 ### Model 2: Referred Informed Model
 
-$y_i|\mu_i$, $\sigma \sim \mbox{Poisson}(\lambda_i)$
+$y_i|\mu_i$, $\sigma \sim \mbox{Normal}(\mu_i, \sigma)$
 
-$\lambda_i = \alpha + \beta_i + \gamma_i$
+$\mu_i = \alpha + \beta_i + \gamma_i$
 
 $\alpha \sim \mbox{Normal}(0, 2.5)$
 
@@ -175,36 +175,37 @@ referred_informed_model <-
 ```
 
 ```{r}
+#| label: fig-total_coded
+#| fig-cap: Visualization to show correlation between number of Calls Coded (represented by the red line) and Homeless Death Counts (represented by the blue line)
 #| echo: false
-#| eval: true
-#| label: tbl-total_coded_modelresults
-#| tbl-cap: "Explanatory model of homeless death count in relation to total number of helpline calls coded per month"
-#| warning: false
+#| message: false
 
-modelsummary::modelsummary(
-  list(
-    "Total Coded Model" = total_coded_model
-  ),
-  statistic = "mad",
-  fmt = 4
-)
+cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm", se = TRUE, color = "blue", linetype = "dashed", formula = "y ~ x") +
+  labs(x = "Monthly Number of Calls Coded (per month)", y = "Monthly Number of Homeless Deaths")
 ```
+
 
 ```{r}
 #| echo: false
 #| eval: true
-#| label: tbl-referred_informed_modelresults
-#| tbl-cap: "Explanatory model of homeless death count in relation to the number of homeless referred to shelters and provided with information on homelessness prevention per month"
+#| label: tbl-modelresults
+#| tbl-cap: "Explanatory model of homeless death count in relation to different helpline efforts"
+#| tbl-subcap: "statistical significances are indicated by p < 0.1 *, p < 0.05 **, p < 0.01 ***, p < 0.001"
 #| warning: false
 
 modelsummary::modelsummary(
   list(
-    "Referred and Informed Model" = referred_informed_model
+    "Total Coded Model" = total_coded_model, "Referred and Informed Model" = referred_informed_model
   ),
   statistic = "mad",
+  stars = TRUE,
   fmt = 4
 )
 ```
+
+
+
 
 # Discussion {#sec-discussion}
 
