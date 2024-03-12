@@ -108,9 +108,9 @@ Magnitude of effect created by the helpline efforts can be estimated through lin
 
 ### Model 1: Total Coded Model
 
-$y_i|\mu_i$, $\sigma \sim \mbox{Normal}(\mu_i, \sigma)$
+$y_i|\lambda_i$, $\sigma \sim \mbox{Poisson}(\lambda_i)$
 
-$\mu_i = \alpha + \phi_i$
+$lambda_i = \alpha + \phi_i$
 
 $\alpha \sim \mbox{Normal}(0, 2.5)$
 
@@ -126,9 +126,9 @@ Where:
 
 ### Model 2: Referred Informed Model
 
-$y_i|\mu_i$, $\sigma \sim \mbox{Normal}(\mu_i, \sigma)$
+$y_i|\mu_i$, $\sigma \sim \mbox{Poisson}(\lambda_i)$
 
-$\mu_i = \alpha + \beta_i + \gamma_i$
+$\lambda_i = \alpha + \beta_i + \gamma_i$
 
 $\alpha \sim \mbox{Normal}(0, 2.5)$
 
