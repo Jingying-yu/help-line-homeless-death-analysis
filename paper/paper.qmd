@@ -294,8 +294,14 @@ referred_informed_model <-
             here::here("models/referred_informed_model.rds"))
 ```
 
--   there exist a net negative correlation between helpline efforts and
-    homeless death count in Toronto
+-   Under the Gaussian regression model, @fig-total-coded illustrates a
+    fitted line that estimates the linear relationship between the
+    number of total calls coded and homeless death count in Toronto. The
+    graph suggest that there exist a net negative correlation between
+    the two variable. According to the graph, homeless death count
+    decrease as total number of calls coded increase. The significance
+    of this relationship is discussed below in in the model summary
+    table.
 
 ```{r}
 #| label: fig-total-coded
@@ -307,6 +313,22 @@ cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha
   geom_smooth(method = "lm", se = TRUE, color = "blue", linetype = "dashed", formula = "y ~ x") +
   labs(x = "Monthly Number of Calls Coded (per month)", y = "Monthly Number of Homeless Deaths")
 ```
+
+
+
+-   The model summary table, @tbl-modelresults, displays the coefficient
+    values of the predictor variables against response variable:
+    homeless death count in Toronto. Coefficients of predictors indicate
+    their influence against the response variable. For example, the
+    column on the left shows that, under Model 1, every 1 additional
+    helpline call coded and decrease the homeless death count by 0.0003.
+    The ***+p \<...*** section at the bottom of the table represents
+    statistically significance of the coefficient values. As indicated
+    by the ***+p\<...*** legend, the coefficients with 1 \*, coefficient
+    is significant at 95% confidence level; for \*\*, coefficient is
+    significant at 99% confidence level, and so on. However, as we can
+    see from the table below, no \* exists for the coefficients in both
+    models.
 
 ```{r}
 #| echo: false
@@ -325,15 +347,6 @@ modelsummary(
   metrics = c("RMSE", "R2")
 )
 ```
-
-Hypothesis 1: - null hypothesis: true effect of total_calls_coded = 0 -
-use t-stat to check at 95% significance level
-
-Hypothesis 2: - null hypothesis: true effect of referred = 0 - use
-t-stat to check at 95% significance level
-
-Hypothesis 3: - null hypothesis: true effect of referred = 0 - use
-t-stat to check at 95% significance level
 
 # Discussion {#sec-discussion}
 
