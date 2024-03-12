@@ -24,7 +24,7 @@ total_coded_model <-
   stan_glm(
     formula = Death_Count ~ Total_Coded,
     data = cleaned_data,
-    family = gaussian(),
+    family = poisson(link = "log"),
     prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
     prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
     prior_aux = exponential(rate = 1, autoscale = TRUE),
@@ -36,7 +36,7 @@ referred_informed_model <-
   stan_glm(
     formula = Death_Count ~ Referred + Informed,
     data = cleaned_data,
-    family = gaussian(),
+    family = poisson(link = "log"),
     prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
     prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
     prior_aux = exponential(rate = 1, autoscale = TRUE),
