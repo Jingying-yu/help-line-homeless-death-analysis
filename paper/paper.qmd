@@ -313,7 +313,7 @@ cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha
 #| eval: true
 #| label: tbl-modelresults
 #| tbl-cap: "Explanatory model of homeless death count in relation to different helpline efforts"
-#| tbl-subcap: "statistical significances are indicated by p < 0.1 *, p < 0.05 **, p < 0.01 ***, p < 0.001"
+
 
 modelsummary(
   list(
