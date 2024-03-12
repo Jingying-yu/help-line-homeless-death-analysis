@@ -116,7 +116,7 @@ The final dataset only includes monthly cumulative data before July of
 #| label: tbl-monthly-coded
 #| tbl-cap: Sample of monthly summation for Helpline Coded Calls data
 #| echo: false
-#| warning: false
+#| message: false
 
 cleaned_data <- read_csv(here::here("data/analysis_data/cleaned_data.csv"))
 
@@ -321,8 +321,6 @@ cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha
   labs(x = "Monthly Number of Calls Coded (per month)", y = "Monthly Number of Homeless Deaths")
 ```
 
-
-
 -   The model summary table, @tbl-modelresults, displays the coefficient
     values of the predictor variables against response variable:
     homeless death count in Toronto. Coefficients of predictors indicate
@@ -357,7 +355,7 @@ modelsummary(
 
 # Discussion {#sec-discussion}
 
-## Realistic Interpretation of Net Efforts
+## Interpretation of Efforts
 
 -   On average, for every increase in calls coded by the helpline, there
     is a 0.0003 unit decrease in homeless death in Toronto. There is an
@@ -374,9 +372,6 @@ modelsummary(
     Prevention* are best suited as individual efforts of measurement for
     positive impacts because they provide a count of the number of
     callers provided with directions or advice.
-
-## Individual Effort: Referral to Shelter
-
 -   On average, for every homeless caller referred to shelter, there is
     a 0.0059 unit **increase** in homeless death in Toronto. Though not
     significant on a statistical level, this trend is still very
@@ -385,10 +380,28 @@ modelsummary(
     referrals to shelter. Accuracy on the current status of shelters,
     level of detail on instructed, and misjudgment of shelter
     eligibility are possible factors of examination. However, since the
-    effect of this call code is statistically insignificant, it is more
-    likely just a fluke caused by the dataset.
+    effect of this call code is statistically insignificant, it is also
+    likely to be just a fluke of observation.
+-   For every caller provided with information on homeless prevention
+    information, there is an average decrease of 0.0048 death count in
+    Toronto.
 
-## Individual Effort: Information on Homelessness Prevention
+## Implication of Insignificance: More Qeustions than Answers
+
+-   Homeless life is not easy, data shows that a total of 522 homeless
+    individual died in Toronto between November 2020 to June 2023.
+
+-   The Central Intake Line is created with the intend to help homeless
+    individuals in need. It provides a 24/7 platform for individuals to
+    receive government help.
+
+-   The insignificance of its influence suggests that the helpline has
+    not fulfilled its intended purpose, though it is also important to
+    note that having insignificant effect on reducing death count does
+    not mean the helpline has not contributed to the well-being of
+    Toronto's homeless population in other ways.
+
+-   This makes us question
 
 ## Weaknesses and next steps
 
