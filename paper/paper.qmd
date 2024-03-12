@@ -6,7 +6,7 @@ author:
 thanks: "Code and data are available at: https://github.com/Jingying-yu/help-line-homeless-death-analysis.git"
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This paper analyzes the influence of Central Intake Line staff efforts on the reduction of homeless death count in Toronto. Data on coded number of calls from Central Intake Call Wrap-Up Codes dataset and data on monthly homeless death count from Deaths of People Experiencing Homelessness dataset are used in generalized linear regression models to estimate the influence. We find that the staffs’ net efforts create a statistically insignificant influence on the reduction of homeless death, with specific types of efforts appearing counterproductive. This implies that, while a positive influence does exist, the impact of the Central Intake Line staff is unfortunately minimal from a statistical point of view."
 format: pdf
 toc: true
 number-sections: true

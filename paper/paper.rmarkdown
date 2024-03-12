@@ -3,7 +3,7 @@ title: "My title"
 subtitle: "My subtitle if needed"
 author: 
   - Sandy Yu
-thanks: "Code and data are available at: LINK."
+thanks: "Code and data are available at: https://github.com/Jingying-yu/help-line-homeless-death-analysis.git"
 date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
@@ -30,18 +30,27 @@ library(ggplot2)
 
 You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
 
-The remainder of this paper is structured as follows. @sec-data....
+Analyses and findings in this paper are structured into several sections: @sec-data -- Data, @sec-model – Model, @sec-results -- Results, and @sec-discussion -- Discussion. The Data section examines all datasets and variables kept for analysis, followed by an explanation of their data cleaning processes. The Model section defines linear models used for further analysis, explain its components, and presents model justifications. The Result section focuses on visualizing and presenting the model results through data presented in Data section. The Discussion section further evaluate the interpretations behind the model results presented in the previous section, and touches on any weaknesses and next steps.
 
 # Data {#sec-data}
 
+All data used in this paper are obtained through OpenDataToronto Portal [@OpenDataToronto]. Two different datasets: Central Intake Call Wrap-Up Codes Data [@Central_Intake_Call] and Deaths of People Experiencing Homelessness[@Homeless_Death_Count], are retrieved to analyze the effect of Toronto’s Central Call Line (denoted as *Helpline* for the remainder of this paper) efforts to the death counts of homeless individuals in Toronto. Data is cleaned and analyzed using the open source statistical programming language R [@citeR] and supporting packages tidyverse [@tidyverse], janitor [@janitor], dplyr [@dplyr], rstanarm [@rstanarm], arrow [@arrow], ggplot2 [@ggplot2], and knitr [@knitr]. Detailed description of each dataset can be found in the subsections below.
+
 ## Central Intake Call Wrap-Up Codes
+
+On the OpenDataToronto portal, there are several datasets that reflect the City’s effort to shelter the local homeless population. The Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call], stored in the Central Intake Calls Catalogue [@Central_Intake_Call], is one of the freshest and most detailed. Data is stored and published by the Shelter, Support & Housing Administration since November of 2020 and refreshes on a monthly basis. The latest refresh occurred on January 15th, 2024.
+
+The data set provides a daily summary of the number of calls received, the number of calls classified into distinct wrap-up codes by the nature of its issue, and a count of calls under each wrap-up code. One of the example wrap-up codes in the original data set was: *Code 1A - Referral to a Sleeping/Resting Space*. The original data set includes 13 distinct wrap-up codes; only two codes, *Code 1A — Referral to a Sleeping/Resting Space* and *Code 2C — Information - Homelessness & Prevention Services*, were chosen for our analysis. Code 1A and Code 2C are best suited as measurements for positive impact the Central Intake Line could provide because they provide a count of the number of callers provided with directions or advice. Other non-suitable wrap-up codes include: *Code 1D - Declined Shelter/Resting Space*, *Code 4B - Disconnected - No Outcome*, etc.
+
+The final dataset only includes monthly cumulative data before July of 2023. The rationalization behind the action will be explained in @sec-combined-data.
+
 
 ```{r}
 #| label: tbl-monthly-coded
 #| tbl-cap: Sample of monthly summation for Helpline Coded Calls data
 #| echo: false
 
-cleaned_data <- read_csv(here::here("data/analysis_data/cleaned_data.csv"))
+cleaned_data <- read_parquet(here::here("data/analysis_data/cleaned_data.parquet"))
 
 sample_helpline <- cleaned_data |> select(Month_date, Total_Coded, Referred, Informed) 
 
@@ -50,7 +59,14 @@ sample_helpline <- head(sample_helpline)
 knitr::kable(sample_helpline, col.names = c("Month", "Calls Coded", "Referral to Shelter", "Homelessness Prevention Info"), align = c("l", "c", "c", "c"))
 ```
 
+
 ## Deaths of People Experiencing Homelessness
+
+The Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] contains monthly cumulative records of homeless deaths. The dataset is published by Toronto Public Health [@TPH]. The earliest data record started in January of 2017, and the latest record ends in June of 2023.
+
+The original dataset contains three columns: *Year of death*, *Month of death*, and *Count*. After careful inspection of raw data, any rows that containing an “unknown” value are excluded. Although this action created a source of error in future analyses, this is still a necessary step because we are plotting death counts against a timeline. 
+
+Final dataset only includes data from November 2020 to June 2023 (@tbl-death-count). The rationalization behind the action will be explained in @sec-data-diff-datasets.
 
 
 ```{r}
@@ -66,7 +82,14 @@ knitr::kable(sample_death_counts, col.names = c("Month", "Death Count"), align =
 ```
 
 
-## Final Combined Dataset
+## Final Combined Data {#sec-combined-data}
+
+During the data cleaning process, code was written to ensure that both the Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call] and the Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] are filtered to include only data between 1st November, 2020 to 30st June, 2023. 
+
+The decision is reached by taking the common time period between the two datasets. In the latest refresh, the Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call] begins on 3rd November, 2020 and end on 31st December, 2023; whereas the Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] begins on January of 2017 and ends on June 2023.
+
+The ultimate purpose of taking the common time period is to ensure that we can have the same amount of observations for analysis. Thus a combined dataset that kept the variables of interest in both datasets is created (@tbl-combined).
+
 
 ```{r}
 #| label: tbl-combined
@@ -80,37 +103,65 @@ knitr::kable(sample_cleaned_data, col.names = c("Month", "Total Coded", "Referre
 ```
 
 
-
-
-# Model
+# Model {#sec-model}
 
 The goal of our modelling strategy is twofold. Firstly,...
 
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
+Here we briefly describe the Bayesian analysis model used to investigate the correlation between homeless death counts in Toronto and the efforts of the Helpline staff. Background details and diagnostics are included in [Appendix -@sec-model-details].
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.
+Magnitude of effect created by the helpline efforts can be estimated through linear models.
 
+### Model 1: Total Coded Model
 
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
+$y_i|\mu_i$, $\sigma \sim \mbox{Normal}(\mu_i, \sigma)$
+
+$mu_i = \alpha + \phi_i$
+
+$\alpha \sim \mbox{Normal}(0, 2.5)$
+
+$\phi \sim \mbox{Normal}(0, 2.5)$
+
+$\sigma \sim \mbox{Exponential}(1)$
+
+Where:
+
+-   $y_i$ is the number of homeless death count in Toronto recorded by @TPH per month
+
+-   $\phi_i$ is the total number of calls received and coded by the helpline per month
+
+### Model 2: Referred Informed Model
+
+$y_i|\mu_i$, $\sigma \sim \mbox{Normal}(\mu_i, \sigma)$
+
+$\mu_i = \alpha + \beta_i + \gamma_i$
+
+$\alpha \sim \mbox{Normal}(0, 2.5)$
+
+$\beta \sim \mbox{Normal}(0, 2.5)$
+
+$\gamma \sim \mbox{Normal}(0, 2.5)$
+
+$\sigma \sim \mbox{Exponential}(1)$
+
+Where:
+
+-   $y_i$ is the number of homeless death count in Toronto recorded by @TPH per month
+
+-   $\beta_i$ is the number of homeless individuals referred to shelters through the helpline, per month
+
+-   $\gamma_i$ is the number of individuals provided with information on homelessness prevention through the helpline, per month
 
 We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
 
-### Model justification
+### Model justifications
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
+We expect a net negative relationship between the net efforts made by the helpline staff (Recorded by the Total_Coded) and homeless death count, which implies that net effect of helpline calls **reduces** homeless death count in Toronto.
 
-We can use maths by including latex between dollar signs, for instance $\theta$.
+Additionally, we expect a negative relationship between homeless death and the number of homeless individuals referred to shelter & the number of individuals provided with homelessness prevention information. Since both factors are coded efforts made by the helpline, both factors should also help to reduce homeless death count in Toronto.
 
-# Results
+# Results {#sec-results}
 
 Our results are summarized in @tbl-total_coded_modelresults and @tbl-referred_informed_modelresults.
 
@@ -132,39 +183,39 @@ referred_informed_model <-
 ```
 
 ```{r}
+#| label: fig-total_coded
+#| fig-cap: Visualization to show correlation between number of Calls Coded (represented by the red line) and Homeless Death Counts (represented by the blue line)
 #| echo: false
-#| eval: true
-#| label: tbl-total_coded_modelresults
-#| tbl-cap: "Explanatory model of homeless death count in relation to total number of helpline calls coded per month"
-#| warning: false
+#| message: false
 
-modelsummary::modelsummary(
-  list(
-    "Total Coded Model" = total_coded_model
-  ),
-  statistic = "mad",
-  fmt = 3
-)
+cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm", se = TRUE, color = "blue", linetype = "dashed", formula = "y ~ x") +
+  labs(x = "Monthly Number of Calls Coded (per month)", y = "Monthly Number of Homeless Deaths")
 ```
 
 ```{r}
 #| echo: false
 #| eval: true
-#| label: tbl-referred_informed_modelresults
-#| tbl-cap: "Explanatory model of homeless death count in relation to the number of homeless referred to shelters and provided with information on homelessness prevention per month"
+#| label: tbl-modelresults
+#| tbl-cap: "Explanatory model of homeless death count in relation to different helpline efforts"
+#| tbl-subcap: "statistical significances are indicated by p < 0.1 *, p < 0.05 **, p < 0.01 ***, p < 0.001"
 #| warning: false
 
 modelsummary::modelsummary(
   list(
-    "Referred and Informed Model" = referred_informed_model
+    "Total Coded Model" = total_coded_model, "Referred and Informed Model" = referred_informed_model
   ),
   statistic = "mad",
-  fmt = 3
+  stars = TRUE,
+  fmt = 4
 )
 ```
 
 
-# Discussion
+
+
+
+# Discussion {#sec-discussion}
 
 ## First discussion point {#sec-first-point}
 
@@ -217,10 +268,10 @@ posterior_vs_prior(total_coded_model) +
 ```
 
 
-
 In @fig-referred_informed_model_ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
 
 In @fig-referred_informed_model_ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows...
+
 
 ```{r}
 #| eval: true
@@ -265,7 +316,6 @@ plot(total_coded_model, "trace")
 
 plot(total_coded_model, "rhat")
 ```
-
 
 
 @fig-referred_informed_model_stanareyouokay-1 is a trace plot. It shows... This suggests...
