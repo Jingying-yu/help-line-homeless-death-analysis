@@ -150,7 +150,7 @@ We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use
 
 ### Model justifications
 
-We expect a net negative relationship between the net efforts made by the helpline staff (Recorded by the Total_Coded column) and homeless death count, which implies that net effect of helpline calls **reduces** homeless death count in Toronto.
+We expect a net negative relationship between the net efforts made by the helpline staff (Recorded by the Total_Coded) and homeless death count, which implies that net effect of helpline calls **reduces** homeless death count in Toronto.
 
 Additionally, we expect a negative relationship between homeless death and the number of homeless individuals referred to shelter & the number of individuals provided with homelessness prevention information. Since both factors are coded efforts made by the helpline, both factors should also help to reduce homeless death count in Toronto.
 
@@ -186,7 +186,7 @@ modelsummary::modelsummary(
     "Total Coded Model" = total_coded_model
   ),
   statistic = "mad",
-  fmt = 3
+  fmt = 4
 )
 ```
 
@@ -202,7 +202,7 @@ modelsummary::modelsummary(
     "Referred and Informed Model" = referred_informed_model
   ),
   statistic = "mad",
-  fmt = 3
+  fmt = 4
 )
 ```
 
