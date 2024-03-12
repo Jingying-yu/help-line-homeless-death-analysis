@@ -24,6 +24,7 @@ library(tidyverse)
 library(readr)
 library(rstanarm)
 library(knitr)
+library(modelsummary)
 library(ggplot2)
 ```
 
@@ -282,8 +283,7 @@ count in Toronto.
 
 # Results {#sec-results}
 
-Our results are summarized in @tbl-total_coded_modelresults and
-@tbl-referred_informed_modelresults.
+Our results are summarized in @tbl-modelresults.
 
 
 ```{r}
@@ -324,15 +324,15 @@ cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha
 #| label: tbl-modelresults
 #| tbl-cap: "Explanatory model of homeless death count in relation to different helpline efforts"
 #| tbl-subcap: "statistical significances are indicated by p < 0.1 *, p < 0.05 **, p < 0.01 ***, p < 0.001"
-#| warning: false
 
-modelsummary::modelsummary(
+modelsummary(
   list(
     "Total Coded Model" = total_coded_model, "Referred and Informed Model" = referred_informed_model
   ),
   statistic = "mad",
   stars = TRUE,
-  fmt = 4
+  fmt = 4,
+  metrics = c("RMSE", "R2")
 )
 ```
 
