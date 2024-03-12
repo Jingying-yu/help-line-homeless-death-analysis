@@ -214,6 +214,9 @@ extremely small values with no evidently different interpretations.
 
 ### Model 1: Total Coded Model
 
+The Total Coded model estimates the the total helpline efforts against
+Toronto's homeless death count.
+
 $y_i|\mu_i$, $\sigma \sim \mbox{Normal}(\mu_i, \sigma)$
 
 $\mu_i = \alpha + \phi_i$
@@ -233,6 +236,10 @@ Where:
     helpline per month
 
 ### Model 2: Referred Informed Model
+
+In case of oversimplification, a second model is proposed to isolate the
+effects of calls that refer individuals to shelter and calls that
+provide information on homelessness prevention.
 
 $y_i|\mu_i$, $\sigma \sim \mbox{Normal}(\mu_i, \sigma)$
 
