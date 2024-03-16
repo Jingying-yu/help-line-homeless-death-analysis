@@ -10,9 +10,6 @@ format: pdf
 toc: true
 number-sections: true
 bibliography: references.bib
-editor: 
-  markdown: 
-    wrap: 72
 ---
 
 ```{r}
@@ -30,87 +27,23 @@ library(ggplot2)
 
 # Introduction
 
-The City of Toronto has been consistently providing funding and staff in
-an effort to reduce the active homeless population within its governing
-district. Amongst numerous city efforts, the 24/7 helpline — Toronto
-Central Intake Line — was created to offer referrals to emergency
-shelters, sleeping accommodations, and provide general information about
-homelessness and prevention. [@Central_Intake_Call]. Starting in 2020,
-detailed data about the Central Intake Line became available on the
-OpenDataToronto portal [@OpenDataToronto].
+The City of Toronto has been consistently providing funding and staff in an effort to reduce the active homeless population within its governing district. Amongst numerous city efforts, the 24/7 helpline — Toronto Central Intake Line — was created to offer referrals to emergency shelters, sleeping accommodations, and provide general information about homelessness and prevention. [@Central_Intake_Call]. Starting in 2020, detailed data about the Central Intake Line became available on the OpenDataToronto portal [@OpenDataToronto].
 
-The estimand of the paper focuses on examining the influence of helpline
-efforts on the reduction of homeless deaths in Toronto. Using Central
-Intake Call Wrap-up Codes data [@Central_Intake_Call] from
-OpenDataToronto [@OpenDataToronto], three different aspects of the
-helpline efforts were isolated: total calls coded, referral to shelter,
-and homelessness prevention information provided. These three key
-aspects were measured against the monthly cumulative death count from
-Deaths of People Experiencing Homelessness Data [@Homeless_Death_Count]
-documented by the Toronto Public Health [@TPH]. The analyses yielded an
-insignificant negative correlation between the net efforts of the
-helpline staff. The variable referral to shelter yields a positive
-correlation with homeless death count, whereas the effort to provide
-homelessness information yields a negative correlation. This implies
-that the net influence of helpline efforts is statistically negligible,
-while individual efforts can be productive or counterproductive. This
-examination in the net efforts and individual efforts can provide the
-helpline with a suggestion of which types of services or calls would be
-more economically efficient to allocate their labor resources on.
+The estimand of the paper focuses on examining the influence of helpline efforts on the reduction of homeless deaths in Toronto. Using Central Intake Call Wrap-up Codes data [@Central_Intake_Call] from OpenDataToronto [@OpenDataToronto], three different aspects of the helpline efforts were isolated: total calls coded, referral to shelter, and homelessness prevention information provided. These three key aspects were measured against the monthly cumulative death count from Deaths of People Experiencing Homelessness Data [@Homeless_Death_Count] documented by the Toronto Public Health [@TPH]. The analyses yielded an insignificant negative correlation between the net efforts of the helpline staff. The variable referral to shelter yields a positive correlation with homeless death count, whereas the effort to provide homelessness information yields a negative correlation. This implies that the net influence of helpline efforts is statistically negligible, while individual efforts can be productive or counterproductive. This examination in the net efforts and individual efforts can provide the helpline with a suggestion of which types of services or calls would be more economically efficient to allocate their labor resources on.
 
-Analyses and findings in this paper are structured into several
-sections: @sec-data -- Data, @sec-model – Model, @sec-results --
-Results, and @sec-discussion -- Discussion. The Data section examines
-all datasets and variables kept for analysis, followed by an explanation
-of their data cleaning processes. The Model section defines linear
-models used for further analysis, explain its components, and presents
-model justifications. The Result section focuses on visualizing and
-presenting the model results through data presented in Data section. The
-Discussion section further evaluate the interpretations behind the model
-results presented in the previous section, and touches on any weaknesses
-and next steps.
+Analyses and findings in this paper are structured into several sections: @sec-data -- Data, @sec-model – Model, @sec-results -- Results, and @sec-discussion -- Discussion. The Data section examines all datasets and variables kept for analysis, followed by an explanation of their data cleaning processes. The Model section defines linear models used for further analysis, explain its components, and presents model justifications. The Result section focuses on visualizing and presenting the model results through data presented in Data section. The Discussion section further evaluate the interpretations behind the model results presented in the previous section, and touches on any weaknesses and next steps.
 
 # Data {#sec-data}
 
-All data used in this paper are obtained through OpenDataToronto Portal
-[@OpenDataToronto]. Two different datasets: Central Intake Call Wrap-Up
-Codes Data [@Central_Intake_Call] and Deaths of People Experiencing
-Homelessness[@Homeless_Death_Count], are retrieved to analyze the effect
-of Toronto’s Central Call Line (denoted as *Helpline* for the remainder
-of this paper) efforts to the death counts of homeless individuals in
-Toronto. Data is cleaned and analyzed using the open source statistical
-programming language R [@citeR] and supporting packages tidyverse
-[@tidyverse], janitor [@janitor], rstanarm [@rstanarm], arrow [@arrow],
-ggplot2 [@ggplot2], and knitr [@knitr]. Detailed description of each
-dataset can be found in the subsections below.
+All data used in this paper are obtained through OpenDataToronto Portal [@OpenDataToronto]. Two different datasets: Central Intake Call Wrap-Up Codes Data [@Central_Intake_Call] and Deaths of People Experiencing Homelessness[@Homeless_Death_Count], are retrieved to analyze the effect of Toronto’s Central Call Line (denoted as *Helpline* for the remainder of this paper) efforts to the death counts of homeless individuals in Toronto. Data is cleaned and analyzed using the open source statistical programming language R [@citeR] and supporting packages tidyverse [@tidyverse], janitor [@janitor], rstanarm [@rstanarm], arrow [@arrow], ggplot2 [@ggplot2], and knitr [@knitr]. Detailed description of each dataset can be found in the subsections below.
 
 ## Central Intake Call Wrap-Up Codes
 
-On the OpenDataToronto portal, there are several datasets that reflect
-the City’s effort to shelter the local homeless population. The Central
-Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call], stored in the
-Central Intake Calls Catalogue [@Central_Intake_Call], is one of the
-freshest and most detailed. Data is stored and published by the Shelter,
-Support & Housing Administration since November of 2020 and refreshes on
-a monthly basis. The latest refresh occurred on January 15th, 2024.
+On the OpenDataToronto portal, there are several datasets that reflect the City’s effort to shelter the local homeless population. The Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call], stored in the Central Intake Calls Catalogue [@Central_Intake_Call], is one of the freshest and most detailed. Data is stored and published by the Shelter, Support & Housing Administration since November of 2020 and refreshes on a monthly basis. The latest refresh occurred on January 15th, 2024.
 
-The data set provides a daily summary of the number of calls received,
-the number of calls classified into distinct wrap-up codes by the nature
-of its issue, and a count of calls under each wrap-up code. One of the
-example wrap-up codes in the original data set was: *Code 1A - Referral
-to a Sleeping/Resting Space*. The original data set includes 13 distinct
-wrap-up codes; only two codes, *Code 1A — Referral to a Sleeping/Resting
-Space* and *Code 2C — Information - Homelessness & Prevention Services*,
-were chosen for our analysis. Code 1A and Code 2C are best suited as
-measurements for positive impact the Central Intake Line could provide
-because they provide a count of the number of callers provided with
-directions or advice. Other non-suitable wrap-up codes include: *Code
-1D - Declined Shelter/Resting Space*, *Code 4B - Disconnected - No
-Outcome*, etc.
+The data set provides a daily summary of the number of calls received, the number of calls classified into distinct wrap-up codes by the nature of its issue, and a count of calls under each wrap-up code. One of the example wrap-up codes in the original data set was: *Code 1A - Referral to a Sleeping/Resting Space*. The original data set includes 13 distinct wrap-up codes; only two codes, *Code 1A — Referral to a Sleeping/Resting Space* and *Code 2C — Information - Homelessness & Prevention Services*, were chosen for our analysis. Code 1A and Code 2C are best suited as measurements for positive impact the Central Intake Line could provide because they provide a count of the number of callers provided with directions or advice. Other non-suitable wrap-up codes include: *Code 1D - Declined Shelter/Resting Space*, *Code 4B - Disconnected - No Outcome*, etc.
 
-The final dataset only includes monthly cumulative data before July of
-2023. The rationalization behind the action will be explained in
-@sec-combined-data.
+The final dataset only includes monthly cumulative data before July of 2023. The rationalization behind the action will be explained in @sec-combined-data.
 
 ```{r}
 #| label: tbl-monthly-coded
@@ -129,21 +62,11 @@ knitr::kable(sample_helpline, col.names = c("Month", "Calls Coded", "Referral to
 
 ## Deaths of People Experiencing Homelessness
 
-The Deaths of People Experiencing Homelessness Dataset
-[@Homeless_Death_Count] contains monthly cumulative records of homeless
-deaths. The dataset is published by Toronto Public Health [@TPH]. The
-earliest data record started in January of 2017, and the latest record
-ends in June of 2023.
+The Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] contains monthly cumulative records of homeless deaths. The dataset is published by Toronto Public Health [@TPH]. The earliest data record started in January of 2017, and the latest record ends in June of 2023.
 
-The original dataset contains three columns: *Year of death*, *Month of
-death*, and *Count*. After careful inspection of raw data, any rows that
-containing an “unknown” value are excluded. Although this action created
-a source of error in future analyses, this is still a necessary step
-because we are plotting death counts against a timeline.
+The original dataset contains three columns: *Year of death*, *Month of death*, and *Count*. After careful inspection of raw data, any rows that containing an “unknown” value are excluded. Although this action created a source of error in future analyses, this is still a necessary step because we are plotting death counts against a timeline.
 
-Final dataset only includes data from November 2020 to June 2023
-(@tbl-death-count). The rationalization behind the action will be
-explained in @sec-combined-data.
+Final dataset only includes data from November 2020 to June 2023 (@tbl-death-count). The rationalization behind the action will be explained in @sec-combined-data.
 
 ```{r}
 #| label: tbl-death-count
@@ -159,23 +82,11 @@ knitr::kable(sample_death_counts, col.names = c("Month", "Death Count"), align =
 
 ## Final Combined Data {#sec-combined-data}
 
-During the data cleaning process, code was written to ensure that both
-the Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call] and
-the Deaths of People Experiencing Homelessness Dataset
-[@Homeless_Death_Count] are filtered to include only data between 1st
-November, 2020 to 30st June, 2023.
+During the data cleaning process, code was written to ensure that both the Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call] and the Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] are filtered to include only data between 1st November, 2020 to 30st June, 2023.
 
-The decision is reached by taking the common time period between the two
-datasets. In the latest refresh, the Central Intake Call Wrap-Up Codes
-Dataset [@Central_Intake_Call] begins on 3rd November, 2020 and end on
-31st December, 2023; whereas the Deaths of People Experiencing
-Homelessness Dataset [@Homeless_Death_Count] begins on January of 2017
-and ends on June 2023.
+The decision is reached by taking the common time period between the two datasets. In the latest refresh, the Central Intake Call Wrap-Up Codes Dataset [@Central_Intake_Call] begins on 3rd November, 2020 and end on 31st December, 2023; whereas the Deaths of People Experiencing Homelessness Dataset [@Homeless_Death_Count] begins on January of 2017 and ends on June 2023.
 
-The ultimate purpose of taking the common time period is to ensure that
-we can have the same amount of observations for analysis. Thus a
-combined dataset that kept the variables of interest in both datasets is
-created (@tbl-combined).
+The ultimate purpose of taking the common time period is to ensure that we can have the same amount of observations for analysis. Thus a combined dataset that kept the variables of interest in both datasets is created (@tbl-combined).
 
 ```{r}
 #| label: tbl-combined
@@ -190,32 +101,17 @@ knitr::kable(sample_cleaned_data, col.names = c("Month", "Total Coded", "Referre
 
 # Model {#sec-model}
 
-While we can still make claims on the correlations between helpline
-efforts and homeless death count without modelling, regression analysis
-is still necessary to provide rigorous backbones for a claim's
-statistical significance.
+While we can still make claims on the correlations between helpline efforts and homeless death count without modelling, regression analysis is still necessary to provide rigorous backbones for a claim's statistical significance.
 
-Here we briefly describe the Bayesian analysis model used to investigate
-the correlation between homeless death counts in Toronto and the efforts
-of the Helpline staff. Background details and diagnostics are included
-in [Appendix -@sec-model-details].
+Here we briefly describe the Bayesian analysis model used to investigate the correlation between homeless death counts in Toronto and the efforts of the Helpline staff. Background details and diagnostics are included in [Appendix -@sec-model-details].
 
 ## Model set-up
 
-Magnitude of effect created by the helpline efforts can be estimated
-through linear models. Gaussian regression model is best suited for our
-analytical purposes. Other generalized linear models such as Logistic
-and Multilevel are not considered due to the nature of the variables in
-interest. Logistic regression model requires data that yields either an
-**yes** or **no** result, whereas multilevel model require more
-complexity between variables. Due to the nature of the Poisson function,
-the Poisson model was considered and discarded because model results in
-extremely small values with no evidently different interpretations.
+Magnitude of effect created by the helpline efforts can be estimated through linear models. Gaussian regression model is best suited for our analytical purposes. Other generalized linear models such as Logistic and Multilevel are not considered due to the nature of the variables in interest. Logistic regression model requires data that yields either an **yes** or **no** result, whereas multilevel model require more complexity between variables. Due to the nature of the Poisson function, the Poisson model was considered and discarded because model results in extremely small values with no evidently different interpretations.
 
 ### Model 1: Total Coded Model
 
-The Total Coded model estimates the the total helpline efforts against
-Toronto's homeless death count.
+The Total Coded model estimates the the total helpline efforts against Toronto's homeless death count.
 
 $$y_i|\mu_i, \sigma \sim \mbox{Normal}(\mu_i, \sigma)$$
 
@@ -229,17 +125,13 @@ $$\sigma \sim \mbox{Exponential}(1)$$
 
 Where:
 
--   $y_i$ is the number of homeless death count in Toronto recorded by
-    @TPH per month
+-   $y_i$ is the number of homeless death count in Toronto recorded by @TPH per month
 
--   $\phi_i$ is the total number of calls received and coded by the
-    helpline per month
+-   $\phi_i$ is the total number of calls received and coded by the helpline per month
 
 ### Model 2: Referred Informed Model
 
-In case of oversimplification, a second model is proposed to isolate the
-effects of calls that refer individuals to shelter and calls that
-provide information on homelessness prevention.
+In case of oversimplification, a second model is proposed to isolate the effects of calls that refer individuals to shelter and calls that provide information on homelessness prevention.
 
 $$y_i|\mu_i, \sigma \sim \mbox{Normal}(\mu_i, \sigma)$$
 
@@ -255,31 +147,19 @@ $$\sigma \sim \mbox{Exponential}(1)$$
 
 Where:
 
--   $y_i$ is the number of homeless death count in Toronto recorded by
-    @TPH per month
+-   $y_i$ is the number of homeless death count in Toronto recorded by @TPH per month
 
--   $\beta_i$ is the number of homeless individuals referred to shelters
-    through the helpline, per month
+-   $\beta_i$ is the number of homeless individuals referred to shelters through the helpline, per month
 
--   $\gamma_i$ is the number of individuals provided with information on
-    homelessness prevention through the helpline, per month
+-   $\gamma_i$ is the number of individuals provided with information on homelessness prevention through the helpline, per month
 
-We run the model in R [@citeR] using the `rstanarm` package of
-@rstanarm. We use the default priors from `rstanarm`.
+We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
 
 ### Model justifications
 
-We expect a net negative relationship between the net efforts made by
-the helpline staff (Recorded by the Total_Coded) and homeless death
-count, which implies that net effect of helpline calls **reduces**
-homeless death count in Toronto.
+We expect a net negative relationship between the net efforts made by the helpline staff (Recorded by the Total_Coded) and homeless death count, which implies that net effect of helpline calls **reduces** homeless death count in Toronto.
 
-Additionally, we expect a negative relationship between homeless death
-and the two individual efforts: *number of homeless individuals referred
-to shelter*, and *number of individuals provided with homelessness
-prevention information*. Since both factors are coded efforts made by
-the helpline, both factors should also help to reduce homeless death
-count in Toronto.
+Additionally, we expect a negative relationship between homeless death and the two individual efforts: *number of homeless individuals referred to shelter*, and *number of individuals provided with homelessness prevention information*. Since both factors are coded efforts made by the helpline, both factors should also help to reduce homeless death count in Toronto.
 
 # Results {#sec-results}
 
@@ -301,13 +181,7 @@ referred_informed_model <-
             here::here("models/referred_informed_model.rds"))
 ```
 
-Under the Gaussian regression model, @fig-total-coded illustrates a
-fitted line that estimates the linear relationship between the number of
-total calls coded and homeless death count in Toronto. The graph suggest
-that there exist a net negative correlation between the two variable.
-According to the graph, homeless death count decrease as total number of
-calls coded increase. The significance of this relationship is discussed
-below in in the model summary table.
+Under the Gaussian regression model, @fig-total-coded illustrates a fitted line that estimates the linear relationship between the number of total calls coded and homeless death count in Toronto. The graph suggest that there exist a net negative correlation between the two variable. According to the graph, homeless death count decrease as total number of calls coded increase. The significance of this relationship is discussed below in in the model summary table.
 
 ```{r}
 #| label: fig-total-coded
@@ -319,19 +193,6 @@ cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha
   geom_smooth(method = "lm", se = TRUE, color = "blue", linetype = "dashed", formula = "y ~ x") +
   labs(x = "Monthly Number of Calls Coded (per month)", y = "Monthly Number of Homeless Deaths")
 ```
-
-The model summary table, @tbl-modelresults, displays the coefficient
-values of the predictor variables against response variable: homeless
-death count in Toronto. Coefficients of predictors indicate their
-influence against the response variable. For example, the column on the
-left shows that, under Model 1, every 1 additional helpline call coded
-and decrease the homeless death count by 0.0003. The ***+p \<...***
-section at the bottom of the table represents statistically significance
-of the coefficient values. As indicated by the ***+p\<...*** legend, the
-coefficients with 1 \*, coefficient is significant at 95% confidence
-level; for \*\*, coefficient is significant at 99% confidence level, and
-so on. However, as we can see from the table below, no \* exists for the
-coefficients in both models.
 
 ```{r}
 #| echo: false
@@ -351,107 +212,31 @@ modelsummary(
 )
 ```
 
+The model summary table, @tbl-modelresults, displays the coefficient values of the predictor variables against response variable: homeless death count in Toronto. Coefficients of predictors indicate their influence against the response variable. For example, the column on the left shows that, under Model 1, every 1 additional helpline call coded and decrease the homeless death count by 0.0003. The ***+p \<...*** section at the bottom of the table represents statistically significance of the coefficient values. As indicated by the ***+p\<...*** legend, the coefficients with 1 \*, coefficient is significant at 95% confidence level; for \*\*, coefficient is significant at 99% confidence level, and so on. However, as we can see from the table below, no \* exists for the coefficients in both models.
+
 # Discussion {#sec-discussion}
 
 ## Interpretation of Efforts
 
--   On average, for every increase in calls coded by the helpline, there
-    is a 0.0003 unit decrease in homeless death in Toronto. There is an
-    overall reduction, albeit very small, in homeless death as the
-    number of total coded calls increase. This implies that the helpline
-    need to take at minimum 3333 calls per month to save 1 homeless life
-    in Toronto. On average, the helpline takes 14828.59 calls per month,
-    meaning that 4.45 lives are saved on average.
--   4.45 is not a significant number in both a practical and statistical
-    sense. To improve the return on total number of calls coded, we
-    attempted to identify promising call codes that contribute to the
-    net positive reduction in homeless death. Out of the 13 different
-    call codes, *Referral to Shelter* and *Information on Homeless
-    Prevention* are best suited as individual efforts of measurement for
-    positive impacts because they provide a count of the number of
-    callers provided with directions or advice. For every caller
-    provided with information on homeless prevention information, there
-    is an average decrease of 0.0048 death count in Toronto. On the
-    other hand, for every homeless caller referred to shelter, there is
-    a 0.0059 unit of average **increase** in homeless death in Toronto.
-    This trend is very counter-intuitive and discouraging at first
-    glance. In the case where the correlation is more significant, we
-    would want to further analyze factor related to referrals to
-    shelter. Accuracy on the current status of shelters, level of detail
-    on instructed, and misjudgment of shelter eligibility are possible
-    factors of examination. However, since the effect of this call code
-    is statistically insignificant, it is also likely to be just a fluke
-    of observation.
+On average, for every increase in calls coded by the helpline, there is a 0.0003 unit decrease in homeless death in Toronto. There is an overall reduction, albeit very small, in homeless death as the number of total coded calls increase. This implies that the helpline need to take at minimum 3333 calls per month to save 1 homeless life in Toronto. On average, the helpline takes 14828.59 calls per month, meaning that 4.45 lives are saved on average.
+
+4.45 is not a significant number in both a practical and statistical sense. To improve the return on total number of calls coded, we attempted to identify promising call codes that contribute to the net positive reduction in homeless death. Out of the 13 different call codes, *Referral to Shelter* and *Information on Homeless Prevention* are best suited as individual efforts of measurement for positive impacts because they provide a count of the number of callers provided with directions or advice. For every caller provided with information on homeless prevention information, there is an average decrease of 0.0048 death count in Toronto. On the other hand, for every homeless caller referred to shelter, there is a 0.0059 unit of average **increase** in homeless death in Toronto. This trend is very counter-intuitive and discouraging at first glance. In the case where the correlation is more significant, we would want to further analyze factor related to referrals to shelter. Accuracy on the current status of shelters, level of detail on instructed, and misjudgment of shelter eligibility are possible factors of examination. However, since the effect of this call code is statistically insignificant, it is also likely to be just a fluke of observation.
 
 ## Factors Contributing to Insignificance
 
-Homeless life is not easy, data from @Homeless_Death_Count shows that a
-total of 522 homeless individual died in Toronto between November 2020
-to June 2023. The Central Intake Line is created with the intend to help
-homeless individuals in need. It provides a 24/7 platform for
-individuals to receive government help. The insignificance of its
-influence suggests that the helpline has not fulfilled its intended
-purpose, though it is also important to note that having insignificant
-effect on reducing death count does not mean the helpline has not
-contributed to the well-being of Toronto's homeless population in other
-ways. The following two subsections discusses two of the possible
-factors that contributes to the insignificance of the helpline's
-influence on the reduction of homeless death in Toronto: inaccessibility
-to phone lines and substitute calling options.
+Homeless life is not easy, data from @Homeless_Death_Count shows that a total of 522 homeless individual died in Toronto between November 2020 to June 2023. The Central Intake Line is created with the intend to help homeless individuals in need. It provides a 24/7 platform for individuals to receive government help. The insignificance of its influence suggests that the helpline has not fulfilled its intended purpose, though it is also important to note that having insignificant effect on reducing death count does not mean the helpline has not contributed to the well-being of Toronto's homeless population in other ways. The following two subsections discusses two of the possible factors that contributes to the insignificance of the helpline's influence on the reduction of homeless death in Toronto: inaccessibility to phone lines and substitute calling options.
 
 ### Inaccessibility of Phone Lines
 
-Difficulty in accessing the helpline may contribute to the
-insignificance of the influence the helpline has on the reduction of
-homeless death in Toronto. In order to access the resources provided by
-the helpline, a homeless individual is required to have access to one of
-the following three tools: mobile phone with valid phone plan, free
-city-run phone, or payphone. Financially, the most expensive option is
-the mobile phone. In 2024, the cheapest calling plan in Toronto starts
-at \$15 before tax, discouraging the less wealthy proportion of the
-homeless population. The cheapest alternative is the city-run free phone
-lines accessible in several City buildings and Universities across
-Toronto. According to @localwiki, there are currently 9 locations in
-downtown Toronto offering access to free phone lines. However, the free
-phone line access is only available during the operation hours of the
-respective buildings, meaning that free calls are not available 24/7.
-This leaves the last option, the affordable and readily available local
-payphones. Currently, Toronto payphones cost 50 cents per call, which is
-definitely more financially reasonable for the homeless population.
-However, numerous articles through the years have pointed out the steady
-decline of functional payphones in Toronto. The popularization of
-smartphones in the last decade contributes to the decrease in the demand
-of payphones, subsequently causing more and more abandoned or
-un-repaired payphone stations. This difficulty in accessing the helpline
-will decrease the number of callers, subsequently lowering the influence
-of the helpline on reducing homeless death in Toronto.
+Difficulty in accessing the helpline may contribute to the insignificance of the influence the helpline has on the reduction of homeless death in Toronto. In order to access the resources provided by the helpline, a homeless individual is required to have access to one of the following three tools: mobile phone with valid phone plan, free city-run phone, or payphone. Financially, the most expensive option is the mobile phone. In 2024, the cheapest calling plan in Toronto starts at \$15 before tax, discouraging the less wealthy proportion of the homeless population. The cheapest alternative is the city-run free phone lines accessible in several City buildings and Universities across Toronto. According to @localwiki, there are currently 9 locations in downtown Toronto offering access to free phone lines. However, the free phone line access is only available during the operation hours of the respective buildings, meaning that free calls are not available 24/7. This leaves the last option, the affordable and readily available local payphones. Currently, Toronto payphones cost 50 cents per call, which is definitely more financially reasonable for the homeless population. However, numerous articles through the years have pointed out the steady decline of functional payphones in Toronto. The popularization of smartphones in the last decade contributes to the decrease in the demand of payphones, subsequently causing more and more abandoned or un-repaired payphone stations. This difficulty in accessing the helpline will decrease the number of callers, subsequently lowering the influence of the helpline on reducing homeless death in Toronto.
 
 ### Substitute Calling Options
 
-The Central Intake Line is one of the biggest city-run homeless
-helplines in Toronto; however, it is not the only one. Using keywords
-“homeless helpline Toronto”, search results such as City of Toronto Line
-(311) and Assaulted Women’s Helpline also appear in the Google search
-engine. The existence of multiple helplines will cause specific problems
-to go to specific channels, reducing the total percent of homeless
-population that choose to use the Central Intake Line inquired in this
-paper. Similar to the previous factor, reduction in the total number of
-calls per month reduces the average influence of the helpline on the
-reduction of homeless death. Other potential factors that may contribute
-to the insignificance of influence are: changes in city policies, lack
-of promotion through non-internet platforms, etc.
+The Central Intake Line is one of the biggest city-run homeless helplines in Toronto; however, it is not the only one. Using keywords “homeless helpline Toronto”, search results such as City of Toronto Line (311) and Assaulted Women’s Helpline also appear in the Google search engine. The existence of multiple helplines will cause specific problems to go to specific channels, reducing the total percent of homeless population that choose to use the Central Intake Line inquired in this paper. Similar to the previous factor, reduction in the total number of calls per month reduces the average influence of the helpline on the reduction of homeless death. Other potential factors that may contribute to the insignificance of influence are: changes in city policies, lack of promotion through non-internet platforms, etc.
 
 ## Weaknesses and next steps
 
-The biggest weakness for this paper is the small sample size of the
-data, there are only 32 observations in the final data used for
-analysis. This suggests that resulting outputs may not accurately
-represent the situation in the real world because trends might only
-exist in our observed sample. Some potential next steps are:
-investigating into the proposed factors that contributes to the
-insignificance of helpline influence on homeless death using real-world
-data and models, as well as researching further into other potential
-factors.
+The biggest weakness for this paper is the small sample size of the data, there are only 32 observations in the final data used for analysis. This suggests that resulting outputs may not accurately represent the situation in the real world because trends might only exist in our observed sample. Some potential next steps are: investigating into the proposed factors that contributes to the insignificance of helpline influence on homeless death using real-world data and models, as well as researching further into other potential factors.
 
 \newpage
 
@@ -463,16 +248,9 @@ factors.
 
 ## Posterior predictive check
 
-In @fig-total-coded-model-ppcheckandposteriorvsprior-1 we implement a
-posterior predictive check. This shows a relatively close match between
-the regression outcome from our data and the simulation created by the
-posterior distribution. This suggests that our model is a relatively
-good fit for our data.
+In @fig-total-coded-model-ppcheckandposteriorvsprior-1 and @fig-referred-informed-model-ppcheckandposteriorvsprior-1, we implement a posterior predictive check. This shows a relatively close match between the regression outcome from our data and the simulation created by the posterior distribution. This suggests that our model is a relatively good fit for our data.
 
-In @fig-total-coded-model-ppcheckandposteriorvsprior-2 we compare the
-posterior with the prior. We can see that the estimation parameters
-shifts minimally after taking data into account. This suggests that good
-prior parameters were set.
+In @fig-total-coded-model-ppcheckandposteriorvsprior-2 and @fig-referred-informed-model-ppcheckandposteriorvsprior-2, we compare the posterior with the prior. We can see that the estimation parameters shifts minimally after taking data into account. This suggests that good prior parameters were set.
 
 ```{r}
 #| eval: true
@@ -494,17 +272,6 @@ posterior_vs_prior(total_coded_model) +
   theme(legend.position = "bottom") +
   coord_flip()
 ```
-
-In @fig-referred-informed-model-ppcheckandposteriorvsprior-1 we
-implement a posterior predictive check. This shows a relatively close
-match between the regression outcome from our data and the simulation
-created by the posterior distribution. This suggests that our model is a
-relatively good fit for our data.
-
-In @fig-referred-informed-model-ppcheckandposteriorvsprior-2 we compare
-the posterior with the prior. We can see that the estimation parameters
-shifts minimally after taking data into account. This suggests that good
-prior parameters were set.
 
 ```{r}
 #| eval: true
@@ -529,18 +296,9 @@ posterior_vs_prior(referred_informed_model) +
 
 ## Diagnostics
 
-@fig-total-coded-model-stanareyouokay-1 is a trace plot. Trace plots are
-often used to diagnose abnormalities of models. In
-@fig-total-coded-model-stanareyouokay-1, lines are oscillating
-vertically and maintains an overall horizontal trend. This suggests that
-there is nothing out of the ordinary for our model.
+@fig-total-coded-model-stanareyouokay-1 and @fig-total-coded-model-stanareyouokay-2 are trace plots. Trace plots are often used to diagnose abnormalities of models. For both plots, lines are oscillating vertically and maintains an overall horizontal trend. This suggests that there is nothing out of the ordinary for our model.
 
-@fig-total-coded-model-stanareyouokay-2 is a Rhat plot. Rhat plot is a
-valuable tool for assessing convergence in Bayesian regression models,
-helping ensure the reliability and validity of the model's inference
-results. In @fig-total-coded-model-stanareyouokay-2, all data points are
-close to 1. This suggest that there is nothing out of the ordinary for
-our model.
+@fig-total-coded-model-stanareyouokay-2 and @fig-referred-informed-model-stanareyouokay-2 are Rhat plots. Rhat plot is a valuable tool for assessing convergence in Bayesian regression models, helping ensure the reliability and validity of the model's inference results. Both both plots, all data points are close to 1. This suggest that there is nothing out of the ordinary for our model.
 
 ```{r}
 #| echo: false
@@ -556,19 +314,6 @@ plot(total_coded_model, "trace")
 
 plot(total_coded_model, "rhat")
 ```
-
-@fig-referred-informed-model-stanareyouokay-1 is a trace plot. Trace
-plots are often used to diagnose abnormalities of models. In
-@fig-referred-informed-model-stanareyouokay-1, lines are oscillating
-vertically and maintains an overall horizontal trend. This suggests that
-there is nothing out of the ordinary for our model.
-
-@fig-referred-informed-model-stanareyouokay-2 is a Rhat plot. Rhat plot
-is a valuable tool for assessing convergence in Bayesian regression
-models, helping ensure the reliability and validity of the model's
-inference results. In @fig-referred-informed-model-stanareyouokay-2, all
-data points are close to 1. This suggest that there is nothing out of
-the ordinary for our model.
 
 ```{r}
 #| echo: false
