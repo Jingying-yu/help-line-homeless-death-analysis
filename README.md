@@ -2,11 +2,12 @@
 
 ## Overview
 
-This repo contains a revision of the paper: @old_paper written in January 2024. Codes written are completed on the Integrated Development Environment Rstudio, using the statistical programming language @citeR.
+This repo contains a revision of the paper: [Efforts to Code Calls created a Positive Impact
+in Reducing Toronto’s Homeless Death Counts](other/literature/Sandy_Yu_old_paper.pdf) written in January 2024. Codes written are completed on the Integrated Development Environment Rstudio, using the statistical programming language R.
 
 New version of the paper focuses on implementing linear regression models on analysis of the relationship between homeless death counts in Toronto and three observed efforts from Toronto's Central Intake Line: the number of calls coded, the number of referral to shelter, and the number of information for homelessness prevention.
 
-Final pdf can be accessed here: @new_paper.
+Final pdf can be accessed [here](paper/paper.pdf).
 
 
 ## File Structure
