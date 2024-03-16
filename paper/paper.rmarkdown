@@ -28,6 +28,7 @@ library(modelsummary)
 library(ggplot2)
 ```
 
+
 # Introduction
 
 The City of Toronto has been consistently providing funding and staff in
@@ -112,6 +113,7 @@ The final dataset only includes monthly cumulative data before July of
 2023. The rationalization behind the action will be explained in
 @sec-combined-data.
 
+
 ```{r}
 #| label: tbl-monthly-coded
 #| tbl-cap: Sample of monthly summation for Helpline Coded Calls data
@@ -126,6 +128,7 @@ sample_helpline <- head(sample_helpline)
 
 knitr::kable(sample_helpline, col.names = c("Month", "Calls Coded", "Referral to Shelter", "Homelessness Prevention Info"), align = c("l", "c", "c", "c"))
 ```
+
 
 ## Deaths of People Experiencing Homelessness
 
@@ -145,6 +148,7 @@ Final dataset only includes data from November 2020 to June 2023
 (@tbl-death-count). The rationalization behind the action will be
 explained in @sec-data-diff-datasets.
 
+
 ```{r}
 #| label: tbl-death-count
 #| tbl-cap: Sample of Cleaned Deaths of People Experiencing Homelessness Dataset
@@ -156,6 +160,7 @@ sample_death_counts <- head(sample_death_counts)
 
 knitr::kable(sample_death_counts, col.names = c("Month", "Death Count"), align = c("c", "c"))
 ```
+
 
 ## Final Combined Data {#sec-combined-data}
 
@@ -177,6 +182,7 @@ we can have the same amount of observations for analysis. Thus a
 combined dataset that kept the variables of interest in both datasets is
 created (@tbl-combined).
 
+
 ```{r}
 #| label: tbl-combined
 #| tbl-cap: Sample of monthly homeless death count and Helpline Coding efforts
@@ -187,6 +193,7 @@ sample_cleaned_data <- head(cleaned_data)
 knitr::kable(sample_cleaned_data, col.names = c("Month", "Total Coded", "Referred to Shelter", "Homeless Info", "Death Count"), align = c("l", "c", "c", "c", "c"))
 
 ```
+
 
 # Model {#sec-model}
 
@@ -285,6 +292,7 @@ count in Toronto.
 
 Our results are summarized in @tbl-modelresults.
 
+
 ```{r}
 #| echo: false
 #| eval: true
@@ -301,6 +309,7 @@ referred_informed_model <-
             here::here("models/referred_informed_model.rds"))
 ```
 
+
 -   Under the Gaussian regression model, @fig-total-coded illustrates a
     fitted line that estimates the linear relationship between the
     number of total calls coded and homeless death count in Toronto. The
@@ -309,6 +318,7 @@ referred_informed_model <-
     decrease as total number of calls coded increase. The significance
     of this relationship is discussed below in in the model summary
     table.
+
 
 ```{r}
 #| label: fig-total-coded
@@ -320,6 +330,7 @@ cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha
   geom_smooth(method = "lm", se = TRUE, color = "blue", linetype = "dashed", formula = "y ~ x") +
   labs(x = "Monthly Number of Calls Coded (per month)", y = "Monthly Number of Homeless Deaths")
 ```
+
 
 -   The model summary table, @tbl-modelresults, displays the coefficient
     values of the predictor variables against response variable:
@@ -334,6 +345,7 @@ cleaned_data |> ggplot(aes(x = Total_Coded, y = Death_Count)) + geom_point(alpha
     significant at 99% confidence level, and so on. However, as we can
     see from the table below, no \* exists for the coefficients in both
     models.
+
 
 ```{r}
 #| echo: false
@@ -352,6 +364,7 @@ modelsummary(
   metrics = c("RMSE", "R2")
 )
 ```
+
 
 # Discussion {#sec-discussion}
 
@@ -411,7 +424,10 @@ The Central Intake Line is one of the biggest city-run homeless helplines in Tor
 
 ## Weaknesses and next steps
 
-The biggest weakness for this paper is the small sample size of the data, there are only 32 observations in the final data used for analysis. This suggests that resulting outputs may not accurately represent the situation in the real world because trends might only exist in our observed sample. Some potential  next steps are: investigating into the proposed factors that contributes to the insignificance of helpline influence on homeless death using real-world data and models, as well as researching further into other potental factors.
+Weaknesses: very small sample size, only 32 observations Next steps:
+investigate into the possible factors that caused a net zero impact on
+reduction of homeless death count and propose possible solution using
+data.
 
 \newpage
 
@@ -428,6 +444,7 @@ posterior predictive check. This shows...
 
 In @fig-total-coded-model-ppcheckandposteriorvsprior-2 we compare the
 posterior with the prior. This shows...
+
 
 ```{r}
 #| eval: true
@@ -450,11 +467,13 @@ posterior_vs_prior(total_coded_model) +
   coord_flip()
 ```
 
+
 In @fig-referred-informed-model-ppcheckandposteriorvsprior-1 we
 implement a posterior predictive check. This shows...
 
 In @fig-referred-informed-model-ppcheckandposteriorvsprior-2 we compare
 the posterior with the prior. This shows...
+
 
 ```{r}
 #| eval: true
@@ -477,6 +496,7 @@ posterior_vs_prior(referred_informed_model) +
   coord_flip()
 ```
 
+
 ## Diagnostics
 
 @fig-total-coded-model-stanareyouokay-1 is a trace plot. It shows...
@@ -484,6 +504,7 @@ This suggests...
 
 @fig-total-coded-model-stanareyouokay-2 is a Rhat plot. It shows... This
 suggests...
+
 
 ```{r}
 #| echo: false
@@ -500,11 +521,13 @@ plot(total_coded_model, "trace")
 plot(total_coded_model, "rhat")
 ```
 
+
 @fig-referred-informed-model-stanareyouokay-1 is a trace plot. It
 shows... This suggests...
 
 @fig-referred-informed-model-stanareyouokay-2 is a Rhat plot. It
 shows... This suggests...
+
 
 ```{r}
 #| echo: false
@@ -521,6 +544,8 @@ plot(referred_informed_model, "trace")
 plot(referred_informed_model, "rhat")
 ```
 
+
 \newpage
 
 # References
+
